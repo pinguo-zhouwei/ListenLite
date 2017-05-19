@@ -113,7 +113,7 @@ public class LocalSongLoader {
             // 音乐uri
             info.uri = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
             // 专辑封面id，根据该id可以获得专辑图片uri
-            info.albumId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
+            info.albumId = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
            /* Uri  albumUri = getAlbumArtUri(info.albumId);
             if(albumUri!=null){
                 info.coverUri = albumUri.getPath();

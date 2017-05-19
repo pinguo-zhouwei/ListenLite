@@ -13,12 +13,17 @@ import android.widget.TextView;
 
 import com.zhouwei.listenlite.BaseFragment;
 import com.zhouwei.listenlite.R;
+import com.zhouwei.listenlite.loader.LrcLoader;
 import com.zhouwei.listenlite.model.Song;
 import com.zhouwei.listenlite.musicplayer.IPlayer;
 import com.zhouwei.listenlite.presenter.BottomPlayContract;
 import com.zhouwei.listenlite.presenter.BottomPlayPresenter;
 import com.zhouwei.listenlite.utils.FileUtils;
 import com.zhouwei.listenlite.utils.ImageLoaderUtils;
+
+import java.io.File;
+
+import rx.functions.Action1;
 
 /**
  * Created by zhouwei on 17/5/5.
@@ -53,6 +58,7 @@ public class PlayMusicBottomFragment extends BaseFragment implements BottomPlayC
        mNextBtn = (ImageView) view.findViewById(R.id.bottom_next_btn);
        mPlayBtn.setOnClickListener(this);
        mNextBtn.setOnClickListener(this);
+       view.findViewById(R.id.bottom_fragment_layout).setOnClickListener(this);
 
        mPresenter = new BottomPlayPresenter();
        mPresenter.onAttach(this);
@@ -130,6 +136,10 @@ public class PlayMusicBottomFragment extends BaseFragment implements BottomPlayC
            case R.id.bottom_next_btn:
                mPresenter.playNext();
                break;
+           case R.id.bottom_fragment_layout:
+               PlayDetailFragment detailFragment = new PlayDetailFragment();
+               detailFragment.show(getFragmentManager(),"PlayDetail");
+               break;
        }
     }
 
@@ -151,10 +161,30 @@ public class PlayMusicBottomFragment extends BaseFragment implements BottomPlayC
     @Override
     public void onStartPlay(@Nullable Song song) {
        updateBottomUIEvent(song);
+
+       getLrc(song);
     }
 
     @Override
     public void onPlayStatusChanged(boolean isPlaying) {
 
+    }
+
+    /**
+     * 获取歌词
+     * @param song
+     */
+    private void getLrc(Song song){
+       new LrcLoader().getLrc(song.title,song.artist,song.duration).subscribe(new Action1<File>() {
+           @Override
+           public void call(File file) {
+               Log.e("zhouwei","getLrc:"+file.getName());
+           }
+       }, new Action1<Throwable>() {
+           @Override
+           public void call(Throwable throwable) {
+               throwable.printStackTrace();
+           }
+       });
     }
 }
